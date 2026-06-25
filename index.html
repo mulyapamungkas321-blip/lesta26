@@ -541,16 +541,31 @@
     }
     .hb-lyric {
       font-family: 'AntonellaScript', 'Great Vibes', cursive;
-      font-size: clamp(1rem, 2.5vw, 1.6rem);
-      color: rgba(255,255,255,0.35);
+      font-size: clamp(0.8rem, 1.8vw, 1.2rem);
+      color: rgba(255,255,255,0.4);
       margin-top: 1.5vh;
       letter-spacing: 0.08em;
       font-style: normal;
-      opacity: 0;
-      transition: opacity 1.5s ease;
+      height: 2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.8s ease;
     }
-    .hb-lyric.show {
-      opacity: 1;
+
+    .hb-sub {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(0.6rem, 1.2vw, 0.85rem);
+      font-style: italic;
+      color: rgba(255,255,255,0.2);
+      margin-top: 2vh;
+      letter-spacing: 0.15em;
+      animation: hbBlink 2.5s ease-in-out infinite;
+    }
+
+    @keyframes hbBlink {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 0.5; }
     }
     @keyframes hbPulse {
       0%, 100% { transform: scale(1); text-shadow: 0 0 60px rgba(139,92,246,0.7), 0 0 120px rgba(139,92,246,0.3), 0 4px 20px rgba(0,0,0,0.9); }
@@ -988,12 +1003,8 @@
       <div class="hb-wrap">
         <div class="hb-title">Happy Birthday</div>
         <div class="hb-name">Lesta</div>
-        <div class="hb-lyric" id="lyric1">I know a place, it's somewhere I go</div>
-        <div class="hb-lyric" id="lyric2">when I need to remember your face</div>
-        <div class="hb-lyric" id="lyric3">Something 'bout you now</div>
-        <div class="hb-lyric" id="lyric4">I can't figure it out</div>
-        <div class="hb-lyric" id="lyric5" style="font-size:clamp(0.75rem,1.5vw,1rem);margin-top:3vh;opacity:0.4">~ about you ~</div>
-        <div class="hb-lyric" id="lyric6" style="font-size:clamp(0.6rem,1.2vw,0.8rem);margin-top:0.5vh;opacity:0.2">~ click anywhere to continue ~</div>
+        <div class="hb-sub">~ click anywhere to continue ~</div>
+        <div class="hb-lyric" id="hbLyric"></div>
       </div>
       <div class="doc-grain"></div>
       <div class="doc-vignette"></div>
@@ -1507,25 +1518,38 @@
     }
 
     // ─── Lyric Animation ───
+    const LYRIC_LINES = [
+      'I know a place, it\'s somewhere I go',
+      'when I need to remember your face',
+      'Something \'bout you now',
+      'I can\'t figure it out',
+      '~ about you ~'
+    ];
     let lyricTimer = null;
 
     function animateLyrics() {
-      const lyrics = document.querySelectorAll('.hb-lyric');
-      lyrics.forEach(l => l.classList.remove('show'));
-      lyricTimer = null;
+      const el = document.getElementById('hbLyric');
+      if (!el) return;
+      el.textContent = '';
+      el.style.opacity = '0';
       let idx = 0;
       function showNext() {
-        if (idx >= lyrics.length) return;
-        lyrics[idx].classList.add('show');
+        if (idx >= LYRIC_LINES.length) {
+          el.style.opacity = '0';
+          return;
+        }
+        el.textContent = LYRIC_LINES[idx];
+        el.style.opacity = '1';
         idx++;
-        lyricTimer = setTimeout(showNext, 2000);
+        lyricTimer = setTimeout(showNext, 3000);
       }
       showNext();
     }
 
     function resetLyrics() {
       if (lyricTimer) { clearTimeout(lyricTimer); lyricTimer = null; }
-      document.querySelectorAll('.hb-lyric').forEach(l => l.classList.remove('show'));
+      const el = document.getElementById('hbLyric');
+      if (el) { el.textContent = ''; el.style.opacity = '0'; }
     }
 
     function getFilmFrames() {
