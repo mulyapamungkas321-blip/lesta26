@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday Lesta!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --purple-900: #1a0a2e;
+      --purple-800: #2d1b4e;
+      --purple-700: #4a2d7a;
+      --purple-600: #6b3fa0;
+      --purple-500: #8b5cf6;
+      --purple-400: #a78bfa;
+      --purple-300: #c4b5fd;
+      --purple-200: #ddd6fe;
+      --purple-100: #ede9fe;
+      --pink-400: #f472b6;
+      --pink-300: #f9a8d4;
+      --white: #ffffff;
+      --ambient-r: 139;
+      --ambient-g: 92;
+      --ambient-b: 246;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Fredoka', sans-serif;
+      background: var(--purple-900);
+      color: var(--white);
+    }
+
+    /* ─── Pages container ─── */
+    .pages {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .page {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      transform: scale(0.92);
+    }
+
+    .page.active {
+      opacity: 1;
+      pointer-events: all;
+      transform: scale(1);
+    }
+
+    .page.exit {
+      opacity: 0;
+      transform: scale(1.08);
+      pointer-events: none;
+    }
+
+    /* ─── Particles canvas ─── */
+    #particles-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ─── Shared ─── */
+    .page > * { position: relative; z-index: 1; }
+
+    .btn {
+      margin-top: 2.5rem;
+      padding: 0.9rem 2.5rem;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(135deg, var(--purple-500), var(--pink-400));
+      color: var(--white);
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 8px 30px rgba(139, 92, 246, 0.35);
+    }
+
+    .btn:hover {
+      transform: scale(1.06) rotate(-1deg);
+      box-shadow: 0 12px 40px rgba(139, 92, 246, 0.5);
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+    }
+
+    .btn--small {
+      padding: 0.7rem 2rem;
+      font-size: 1rem;
+    }
+
+    /* ─── Spotify Card (global) ─── */
+    .spotify-card {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 999;
+      width: 340px;
+      max-width: 90vw;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 28px;
+      padding: 2rem 2rem 1.8rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 20px 60px rgba(139, 92, 246, 0.2);
+    }
+
+    .spotify-card .cover-wrap {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin: 0 auto 1.2rem;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    }
+
+    .spotify-card .cover-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .spotify-card .cover-wrap .spin-disc {
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(139,92,246,0.3), rgba(244,114,182,0.2));
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .spotify-card .cover-wrap .spin-disc.spinning {
+      opacity: 1;
+      animation: spinDisc 4s linear infinite;
+    }
+
+    .spotify-card .cover-wrap .play-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.3);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: 16px;
+    }
+
+    .spotify-card:hover .cover-wrap .play-overlay {
+      opacity: 1;
+    }
+
+    .spotify-card .play-overlay .play-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      color: #1a0a2e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      transition: transform 0.2s ease;
+      transform: scale(0.9);
+    }
+
+    .spotify-card:hover .play-overlay .play-icon {
+      transform: scale(1);
+    }
+
+    .spotify-card .song-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-top: 0.5rem;
+    }
+
+    .spotify-card .song-artist {
+      font-size: 0.9rem;
+      color: var(--purple-300);
+      margin-top: 0.2rem;
+      font-weight: 300;
+    }
+
+    .spotify-card .song-bar-wrap {
+      margin-top: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .spotify-card .song-bar-wrap .time {
+      font-size: 0.65rem;
+      color: var(--purple-400);
+      min-width: 2.2rem;
+    }
+
+    .spotify-card .song-bar {
+      flex: 1;
+      height: 3px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .spotify-card .song-bar .fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--purple-400), var(--pink-400));
+      border-radius: 2px;
+      transition: width 1s linear;
+    }
+
+    .spotify-card .song-bar .fill.playing {
+      background: linear-gradient(90deg, var(--purple-400), var(--pink-400));
+    }
+
+    .spotify-card .hint-text {
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--purple-400);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .spotify-card.minimized {
+      position: fixed;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%) scale(0.75);
+      transform-origin: left center;
+      width: 260px;
+      padding: 1rem 1.2rem;
+      border-radius: 0 20px 20px 0;
+      cursor: default;
+      z-index: 998;
+      box-shadow: 0 20px 60px rgba(139, 92, 246, 0.35);
+    }
+
+    .spotify-card.minimized .cover-wrap {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 0.6rem;
+      border-radius: 12px;
+    }
+
+    .spotify-card.minimized .cover-wrap .play-overlay {
+      display: none;
+    }
+
+    .spotify-card.minimized .song-title {
+      font-size: 1rem;
+      margin: 0;
+      text-align: center;
+    }
+
+    .spotify-card.minimized .song-artist {
+      display: block;
+      font-size: 0.7rem;
+      margin-top: 0.15rem;
+      text-align: center;
+    }
+
+    .spotify-card.minimized .song-bar-wrap {
+      display: flex;
+      margin-top: 0.6rem;
+    }
+
+    .spotify-card.minimized .song-bar-wrap .time {
+      font-size: 0.55rem;
+      min-width: 1.8rem;
+    }
+
+    .spotify-card.minimized .hint-text {
+      display: none;
+    }
+
+    .spotify-card.minimized .spin-disc {
+      display: block;
+    }
+
+    @keyframes spinDisc {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+
+
+    /* ─── Page 2: Film Strip Lyric (Cinematic) ─── */
+    .page-2 {
+      overflow: hidden;
+      background: var(--bg-dark, hsl(230, 25%, 5%));
+    }
+
+    .film-strip-scene {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .film-strip-container {
+      position: absolute;
+      left: -60%;
+      width: 220%;
+      display: flex;
+      align-items: center;
+      overflow: visible;
+      height: 30vh;
+    }
+
+    .film-strip-container.slanted-up {
+      top: -8%;
+      transform: rotate(5deg);
+      z-index: 2;
+      opacity: 0.6;
+    }
+
+    .film-strip-container.slanted-down {
+      top: 35%;
+      transform: rotate(-6deg);
+      z-index: 3;
+      opacity: 0.55;
+    }
+
+    .film-strip-container.horizontal {
+      bottom: -8%;
+      transform: rotate(2deg);
+      z-index: 4;
+      opacity: 0.6;
+    }
+
+    .film-track {
+      display: flex;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      gap: 0;
+      align-items: center;
+      will-change: transform;
+    }
+
+    .film-strip-container.slanted-up .film-track {
+      animation: scrollFilm 110s linear infinite;
+      animation-play-state: paused;
+    }
+
+    .film-strip-container.slanted-down .film-track {
+      animation: scrollFilmReverse 140s linear infinite;
+      animation-play-state: paused;
+    }
+
+    .film-strip-container.horizontal .film-track {
+      animation: scrollFilm 90s linear infinite;
+      animation-play-state: paused;
+    }
+
+    .film-track.running {
+      animation-play-state: running !important;
+    }
+
+    @keyframes scrollFilm {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-33.3333%); }
+    }
+
+    @keyframes scrollFilmReverse {
+      0% { transform: translateX(-33.3333%); }
+      100% { transform: translateX(0); }
+    }
+
+    .film-frame {
+      height: 100%;
+      aspect-ratio: 1.5;
+      display: flex;
+      flex-direction: column;
+      background: #0b0b0b;
+      position: relative;
+      flex-shrink: 0;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.45s ease;
+    }
+
+    .film-frame.active {
+      z-index: 20;
+      transform: scale(1.2);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 25px rgba(139, 92, 246, 0.4);
+    }
+
+    .sprockets {
+      height: 6%;
+      width: 100%;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='16'><mask id='m'><rect width='24' height='16' fill='white'/><rect x='4' y='3' width='16' height='10' rx='2.5' fill='black'/></mask><rect width='24' height='16' fill='%230b0b0b' mask='url(%23m)'/></svg>");
+      background-repeat: repeat-x;
+      background-size: auto 100%;
+      flex-shrink: 0;
+    }
+
+    .film-photo-container {
+      flex: 1;
+      width: 100%;
+      background: #0b0b0b;
+      overflow: hidden;
+      padding: 0 5px;
+      position: relative;
+    }
+
+    .film-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 2px;
+      filter: brightness(0.40) contrast(1.05) saturate(0.35) grayscale(0.3);
+      transition: filter 0.5s ease, transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .film-frame.active .film-photo {
+      filter: brightness(1.15) contrast(1.05) grayscale(0);
+      transform: scale(1.08);
+    }
+
+    .page-2 .doc-grain {
+      position: fixed;
+      inset: 0;
+      z-index: 99;
+      pointer-events: none;
+      opacity: 0.18;
+      pointer-events: none;
+      animation: grainShift 0.08s steps(1) infinite;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+
+    @keyframes grainShift {
+      0%   { background-position:   0px   0px; }
+      10%  { background-position: -30px -20px; }
+      20%  { background-position:  15px  40px; }
+      30%  { background-position: -45px  10px; }
+      40%  { background-position:  20px -35px; }
+      50%  { background-position: -10px  25px; }
+      60%  { background-position:  35px -15px; }
+      70%  { background-position: -25px  45px; }
+      80%  { background-position:  40px   5px; }
+      90%  { background-position: -15px -40px; }
+      100% { background-position:   0px   0px; }
+    }
+
+    .page-2 .doc-vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      background:
+        radial-gradient(ellipse at center, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.78) 100%),
+        linear-gradient(to bottom,
+          rgba(0,0,0,0.65) 0%,
+          rgba(0,0,0,0.15) 20%,
+          rgba(0,0,0,0.15) 80%,
+          rgba(0,0,0,0.70) 100%
+        );
+      pointer-events: none;
+    }
+
+    /* ─── Page 2: Happy Birthday ─── */
+    .hb-wrap {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 1.2s ease 0.3s, visibility 1.2s ease 0.3s;
+    }
+    .page-2.active .hb-wrap {
+      opacity: 1;
+      visibility: visible;
+    }
+    .hb-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 6vw, 5rem);
+      font-weight: 700;
+      font-style: italic;
+      color: #e8e0ff;
+      text-shadow: 0 0 60px rgba(139,92,246,0.7), 0 0 120px rgba(139,92,246,0.3), 0 4px 20px rgba(0,0,0,0.9);
+      letter-spacing: 0.15em;
+      animation: hbPulse 4s ease-in-out infinite;
+    }
+    .hb-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 10vw, 8rem);
+      font-weight: 900;
+      font-style: italic;
+      color: #fff;
+      text-shadow: 0 0 80px rgba(139,92,246,0.8), 0 0 160px rgba(139,92,246,0.4), 0 6px 30px rgba(0,0,0,0.95);
+      letter-spacing: 0.08em;
+      margin-top: -0.15em;
+      background: linear-gradient(135deg, #f0eaff 0%, #c4b5fd 40%, #a78bfa 70%, #f0eaff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: hbGlow 3s ease-in-out infinite;
+    }
+    .hb-sub {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(0.8rem, 1.4vw, 1.1rem);
+      font-style: italic;
+      color: rgba(255,255,255,0.35);
+      margin-top: 3vh;
+      letter-spacing: 0.2em;
+      animation: hbBlink 2.5s ease-in-out infinite;
+    }
+    @keyframes hbPulse {
+      0%, 100% { transform: scale(1); text-shadow: 0 0 60px rgba(139,92,246,0.7), 0 0 120px rgba(139,92,246,0.3), 0 4px 20px rgba(0,0,0,0.9); }
+      50% { transform: scale(1.03); text-shadow: 0 0 80px rgba(139,92,246,0.9), 0 0 160px rgba(139,92,246,0.5), 0 4px 20px rgba(0,0,0,0.9); }
+    }
+    @keyframes hbGlow {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.2); }
+    }
+    @keyframes hbBlink {
+      0%, 100% { opacity: 0.35; }
+      50% { opacity: 0.7; }
+    }
+
+    /* ─── Page 3: Gift Box ─── */
+    .gift-wrap {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    .gift-box {
+      position: relative;
+      width: clamp(80px, 14vw, 130px);
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .gift-box:hover { transform: scale(1.05); }
+    .gift-body {
+      width: 100%;
+      aspect-ratio: 1.1;
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      border-radius: 8px;
+      position: relative;
+      box-shadow: 0 15px 50px rgba(139,92,246,0.4);
+    }
+    .gift-lid {
+      width: 104%;
+      aspect-ratio: 2.2;
+      background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+      border-radius: 6px;
+      position: relative;
+      margin: 0 auto -4%;
+      z-index: 2;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+      transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+      transform-origin: bottom center;
+    }
+    .gift-box.opened .gift-lid {
+      transform: translateY(-60%) rotateX(40deg) scale(0.9);
+      opacity: 0.6;
+    }
+    .gift-ribbon-h {
+      position: absolute;
+      top: 50%; left: 0; right: 0;
+      height: 10%;
+      background: #fbbf24;
+      transform: translateY(-50%);
+      border-radius: 2px;
+    }
+    .gift-ribbon-v {
+      position: absolute;
+      top: 0; bottom: 0; left: 50%;
+      width: 10%;
+      background: #fbbf24;
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+    .gift-bow {
+      position: absolute;
+      top: -18%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30%;
+      aspect-ratio: 1;
+      z-index: 3;
+    }
+    .gift-bow::before, .gift-bow::after {
+      content: '';
+      position: absolute;
+      width: 70%;
+      aspect-ratio: 1;
+      background: radial-gradient(ellipse at 40% 40%, #fcd34d, #f59e0b);
+      border-radius: 50% 50% 50% 0;
+    }
+    .gift-bow::before { left: -10%; top: 0; transform: rotate(-30deg); border-radius: 50% 0 50% 50%; }
+    .gift-bow::after { right: -10%; top: 0; transform: rotate(30deg); border-radius: 0 50% 50% 50%; }
+    .gift-hint {
+      margin-top: 2rem;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      color: rgba(255,255,255,0.3);
+      animation: giftBlink 2s ease-in-out infinite;
+    }
+    @keyframes giftBlink {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.7; }
+    }
+    .letter-popup {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+      padding: 1rem;
+    }
+    .letter-popup.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    .letter-popup.show .letter-card {
+      transform: scale(1);
+      opacity: 1;
+    }
+    .letter-card {
+      max-width: 520px;
+      width: 88%;
+      background: rgba(20,15,28,0.92);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 1.2rem 1.4rem;
+      text-align: center;
+      transform: scale(0.85);
+      opacity: 0;
+      transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1), opacity 0.5s ease;
+    }
+    .letter-flowers {
+      font-size: 1.4rem;
+      letter-spacing: 0.4em;
+      margin-bottom: 0.4rem;
+    }
+    .letter-text {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(0.8rem, 1.6vw, 0.95rem);
+      line-height: 1.5;
+      color: rgba(255,255,255,0.85);
+      text-align: left;
+    }
+    .letter-text p { margin-bottom: 0.4rem; }
+    .letter-text strong { color: #c4b5fd; }
+    .letter-text em { color: #f9a8d4; font-style: italic; }
+    .letter-sign {
+      margin-top: 1rem;
+      text-align: center;
+      font-style: italic;
+      color: #a78bfa;
+      font-size: 0.9rem;
+    }
+    .letter-card .btn {
+      margin-top: 1rem;
+    }
+
+    /* ─── Page 4: Gallery ─── */
+    .page-4 .galeri-strip {
+      max-width: 640px;
+      margin: 1rem -2rem 0.5rem;
+      overflow: hidden;
+      position: relative;
+      mask-image: linear-gradient(90deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
+    }
+
+    .page-4 .galeri-label {
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(0.7rem, 1.2vw, 0.85rem);
+      font-style: italic;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.25em;
+      margin-bottom: 0.1rem;
+      text-transform: uppercase;
+    }
+
+    .page-4 .galeri-sub {
+      text-align: center;
+      font-family: 'Fredoka', sans-serif;
+      font-size: clamp(0.55rem, 0.9vw, 0.7rem);
+      color: rgba(255,255,255,0.15);
+      letter-spacing: 0.2em;
+      margin-bottom: 0.6rem;
+    }
+
+    .page-4 .galeri-track {
+      display: flex;
+      gap: 0.8rem;
+      width: fit-content;
+      animation: galeriScroll 20s linear infinite;
+    }
+
+    .page-4 .galeri-track img {
+      height: 160px;
+      width: auto;
+      border-radius: 6px;
+      object-fit: cover;
+      flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .page-4 .galeri-track img:hover {
+      transform: scale(1.08) rotate(-1deg);
+      box-shadow: 0 6px 24px rgba(139, 92, 246, 0.3);
+    }
+
+    @keyframes galeriScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ─── Page 7: Ending ─── */
+    .page-7 .end-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      color: var(--purple-200);
+    }
+
+    .end-msg .highlight {
+      color: var(--pink-300);
+      font-weight: 600;
+    }
+
+    .page-7 .end-msg {
+      margin-top: 1rem;
+      color: var(--purple-300);
+      font-size: 1.1rem;
+    }
+
+    .page-7 .end-msg--small {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.3);
+      font-style: italic;
+    }
+
+    .page-7 .end-hearts {
+      margin-top: 1.5rem;
+      font-size: 2rem;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .page-7 .end-thanks {
+      margin-top: 1rem;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(0.9rem, 1.6vw, 1.1rem);
+      font-style: italic;
+      color: var(--pink-300);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .page-7 .end-photos {
+      margin-top: 1rem;
+      display: flex;
+      gap: 0.8rem;
+      justify-content: center;
+    }
+
+    .page-7 .end-photos img {
+      height: 120px;
+      width: auto;
+      border-radius: 8px;
+      object-fit: cover;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease;
+    }
+
+    .page-7 .end-photos img:hover {
+      transform: scale(1.08) rotate(-1deg);
+    }
+
+    .page-7 .btn--restart {
+      background: linear-gradient(135deg, var(--purple-500), var(--pink-400));
+    }
+
+    /* ─── Confetti ─── */
+    .confetti-piece {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      top: -10px;
+      z-index: 9999;
+      pointer-events: none;
+      animation: confettiFall linear forwards;
+    }
+
+    /* ─── Page title ─── */
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      margin-bottom: 1.5rem;
+    }
+
+    /* ─── Keyframes ─── */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-15px) rotate(-2deg); }
+      40% { transform: translateX(15px) rotate(2deg); }
+      60% { transform: translateX(-10px); }
+      80% { transform: translateX(10px); }
+    }
+
+    @keyframes bounceHappy {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes confettiFall {
+      0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg) scale(0.3); opacity: 0; }
+    }
+
+    /* ─── Progress bar ─── */
+    .progress {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 1.2rem;
+    }
+
+    .progress .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      transition: all 0.3s ease;
+    }
+
+    .progress .dot.active {
+      background: var(--purple-400);
+      box-shadow: 0 0 12px rgba(139, 92, 246, 0.5);
+      transform: scale(1.3);
+    }
+
+    /* ─── Music button ─── */
+    .music-btn {
+      position: fixed;
+      top: 1.2rem;
+      right: 1.2rem;
+      z-index: 999;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(12px);
+      color: var(--purple-200);
+      font-size: 1.4rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .music-btn:hover {
+      background: rgba(139, 92, 246, 0.3);
+      transform: scale(1.1);
+    }
+
+    .music-btn.playing {
+      animation: musicPulse 1.5s ease-in-out infinite;
+      border-color: var(--purple-400);
+    }
+
+    @keyframes musicPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+      50% { box-shadow: 0 0 0 12px rgba(139, 92, 246, 0); }
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 600px) {
+      .page-4 .galeri-strip { width: calc(100% + 2rem); margin: 0.8rem -1rem 0.3rem; }
+      .page-4 .galeri-track img { height: 110px; }
+      .music-btn { top: 0.8rem; right: 0.8rem; width: 42px; height: 42px; font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="particles-canvas"></canvas>
+
+  <audio id="bgm" preload="metadata">
+    <source src="aboutyou.mp3" type="audio/mpeg">
+  </audio>
+  <button class="music-btn" id="musicBtn" title="Play music">&#9654;</button>
+
+  <div class="progress" id="progress"></div>
+
+  <div class="pages">
+
+    <!-- ══ PAGE 2: HAPPY BIRTHDAY ══ -->
+    <div class="page page-2" data-index="0">
+      <div class="film-strip-scene" id="filmStripScene">
+        <div class="film-strip-container slanted-up">
+          <div class="film-track" id="filmTrackUp"></div>
+        </div>
+        <div class="film-strip-container slanted-down">
+          <div class="film-track" id="filmTrackDown"></div>
+        </div>
+        <div class="film-strip-container horizontal">
+          <div class="film-track" id="filmTrackHoriz"></div>
+        </div>
+      </div>
+      <div class="hb-wrap">
+        <div class="hb-title">HAPPY BIRTHDAY</div>
+        <div class="hb-name">LESTA</div>
+        <div class="hb-sub">~ click anywhere to continue ~</div>
+      </div>
+      <div class="doc-grain"></div>
+      <div class="doc-vignette"></div>
+    </div>
+
+    <!-- ══ PAGE 3: GIFT BOX ══ -->
+    <div class="page page-3" data-index="1">
+      <div class="gift-wrap" id="giftWrap">
+        <div class="gift-box" id="giftBox">
+          <div class="gift-lid" id="giftLid">
+            <div class="gift-bow"></div>
+            <div class="gift-ribbon-h"></div>
+            <div class="gift-ribbon-v"></div>
+          </div>
+          <div class="gift-body">
+            <div class="gift-ribbon-h"></div>
+            <div class="gift-ribbon-v"></div>
+          </div>
+        </div>
+        <p class="gift-hint">&#128073; ada pesann darii mulyaa</p>
+      </div>
+
+      <div class="letter-popup" id="letterPopup">
+        <div class="letter-card">
+          <div class="letter-flowers">&#127800;&#127801;&#127800;</div>
+          <div class="letter-text">
+            <p><strong>Untuk Lesta,</strong></p>
+            <p>Selamat ulang tahun ade sukma lestariii, semoga di umur lesta yang sekarang, semua yang lagi kamu usahain bisa berjalan sesuai harapan. semoga kamu sehat dan bahagia selalu.</p>
+            <p>Tetap jadi orang yang baik, ceria, dan apa adanya yaa, karena itu yang bikin kamu spesial. semoga tahun ini jadi salah satu tahun terbaik buat kamu. selamat menikmati hari spesialmu, kamu layak dapat semua kebahagiaan itu. &#10084;&#65039;</p>
+            <p>ga kerasa yaa udah berapa tahun kita kenal, bersyukur sihh punya kenangan seruu sama kamuu kadang akuuu suka scroll chatt kamu tauu lucu bangett dulu hahahaha, yaa sekarang cumann kenangan aja walaupun di ulang akhirnya mungkin bakal tetap sama,</p>
+            <p class="letter-sign">Dari seseorang yang bersyukur banget kenal kamu.</p>
+          </div>
+          <div class="letter-flowers">&#127801;&#127800;&#127801;</div>
+          <button class="btn" data-next="2">&#128073; Lanjut!</button>
+        </div>
+      </div>
+    </div>
+    <div class="page page-4" data-index="2">
+      <div class="galeri-strip">
+        <div class="galeri-label">&#128247; Galeri Kenangan&#128247;</div>
+        <div class="galeri-sub">2023-2024</div>
+        <div class="galeri-track">
+          <img src="lesta1.jpeg" alt="">
+          <img src="lesta2.jpeg" alt="">
+          <img src="lesta3.jpeg" alt="">
+          <img src="lesta4.jpeg" alt="">
+          <img src="lesta5.jpeg" alt="">
+          <img src="lesta6.jpeg" alt="">
+          <img src="lesta7.jpeg" alt="">
+          <img src="lesta8.jpeg" alt="">
+          <img src="lesta9.jpeg" alt="">
+          <img src="lesta1.jpeg" alt="">
+          <img src="lesta2.jpeg" alt="">
+          <img src="lesta3.jpeg" alt="">
+          <img src="lesta4.jpeg" alt="">
+          <img src="lesta5.jpeg" alt="">
+          <img src="lesta6.jpeg" alt="">
+          <img src="lesta7.jpeg" alt="">
+          <img src="lesta8.jpeg" alt="">
+          <img src="lesta9.jpeg" alt="">
+        </div>
+      </div>
+      <button class="btn" data-next="3">&#127873; Klik untuk kejutan!</button>
+    </div>
+
+    <!-- ══ PAGE 7: ENDING ══ -->
+    <div class="page page-7" data-index="3">
+      <h2 class="end-title">&#127775; Sekali lagi... &#127775;</h2>
+      <p class="end-msg"><span class="highlight">Happy Birthday, Lesta!</span></p>
+      <p class="end-msg">Semoga semua harapan kamu terwujud ya! &#129392;</p>
+      <p class="end-msg end-msg--small">maaf yaa cuman bisa ngasih kamu ini aja</p>
+      <div class="end-hearts">&#10084;&#65039; &#10084;&#65039; &#10084;&#65039;</div>
+      <p class="end-thanks">BTW MAKASIII KUEENYAA YAA &#127874;&#10024;</p>
+      <div class="end-photos">
+        <img src="mulya2.jpeg" alt="">
+      </div>
+      <button class="btn btn--restart" id="btnRestart">&#128260; Main lagi!</button>
+    </div>
+
+  </div>
+
+  <!-- ══ SPOTIFY CARD (global) ══ -->
+  <div class="spotify-card" id="spotifyCard">
+    <div class="cover-wrap">
+      <img src="aboutyou1.jpeg" alt="About You" id="aboutYouCover">
+      <div class="spin-disc" id="spinDisc"></div>
+      <div class="play-overlay">
+        <div class="play-icon" id="playIcon">&#9654;</div>
+      </div>
+    </div>
+    <div class="song-title">About You</div>
+    <div class="song-artist">&#127925; Klik untuk putar &#127925;</div>
+    <div class="song-bar-wrap">
+      <span class="time">0:00</span>
+      <div class="song-bar">
+        <div class="fill" id="progressFill"></div>
+      </div>
+      <span class="time">1:00</span>
+    </div>
+    <div class="hint-text">&#128073; Klik untuk memulai</div>
+  </div>
+
+  <script>
+    // ─── Navigation ───
+    let currentPage = 0;
+    const pages = document.querySelectorAll('.page');
+    const totalPages = pages.length;
+
+    function buildProgress() {
+      const container = document.getElementById('progress');
+      container.innerHTML = '';
+      for (let i = 0; i < totalPages; i++) {
+        const dot = document.createElement('div');
+        dot.classList.add('dot');
+        container.appendChild(dot);
+      }
+    }
+    buildProgress();
+
+    function goToPage(index) {
+      const prev = currentPage;
+      const next = index;
+
+      if (next < 0 || next >= totalPages) return;
+
+      pages[prev].classList.remove('active');
+      pages[prev].classList.add('exit');
+
+      setTimeout(() => {
+        pages[prev].classList.remove('exit');
+      }, 600);
+
+      // Run film strips on page 2, stop elsewhere
+      if (next === 0) {
+        setFilmTracksPlayState(true);
+        burstConfetti(60);
+      } else if (prev === 0) {
+        setFilmTracksPlayState(false);
+      }
+
+      pages[next].classList.add('active');
+
+      // Update progress
+      document.querySelectorAll('.progress .dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === next);
+      });
+
+      // Confetti on page 2, gift page, and ending
+      if (next === 0) burstConfetti(60);
+      if (next === 1) burstConfetti(20);
+      if (next === 3) burstConfetti(40);
+
+      currentPage = next;
+    }
+
+    // ─── Button listeners ───
+    document.querySelectorAll('[data-next]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = parseInt(btn.dataset.next);
+        goToPage(target);
+      });
+    });
+
+    document.getElementById('btnRestart')?.addEventListener('click', () => {
+      // Reset Spotify card
+      spotifyCard.classList.remove('minimized');
+      spotifyCard.style.cursor = 'pointer';
+      cardMinimized = false;
+      spotifyCardClicked = false;
+      spinDisc.classList.remove('spinning');
+      progressFill.classList.remove('playing');
+      progressFill.style.width = '0%';
+      playIcon.innerHTML = '&#9654;';
+      document.querySelector('.spotify-card .song-artist').textContent = '&#127925; Klik untuk putar &#127925;';
+      document.querySelector('.spotify-card .hint-text').textContent = '&#128073; Klik untuk memulai';
+      document.querySelector('.spotify-card .time:first-child').textContent = '0:00';
+      musicBtn.style.display = 'flex';
+      if (musicPlaying) {
+        audio.pause();
+        audio.currentTime = 0;
+        musicPlaying = false;
+        musicBtn.innerHTML = '&#9654;';
+        musicBtn.classList.remove('playing');
+      }
+
+      // Go back to initial state: hide all pages, show only Spotify card
+      setFilmTracksPlayState(false);
+      getFilmFrames().forEach(f => f.classList.remove('active'));
+      pages.forEach(p => {
+        p.classList.remove('active', 'exit');
+      });
+      document.querySelectorAll('.progress .dot').forEach(d => d.classList.remove('active'));
+      currentPage = -1;
+    });
+
+    // ─── Particles ───
+    const canvas = document.getElementById('particles-canvas');
+    const ctx = canvas.getContext('2d');
+    let w, h, particles = [];
+
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    class Particle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.size = Math.random() * 3 + 1.5;
+        this.speedY = -Math.random() * 0.6 - 0.1;
+        this.speedX = (Math.random() - 0.5) * 0.2;
+        this.opacity = Math.random() * 0.4 + 0.15;
+        this.hue = Math.random() * 60 + 250;
+      }
+      update() {
+        this.y += this.speedY;
+        this.x += this.speedX;
+        if (this.y < -10 || this.x < -10 || this.x > w + 10) {
+          this.reset();
+          this.y = h + 10;
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${this.hue}, 80%, 70%, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+
+    const count = Math.min(60, Math.floor(w * h / 18000));
+    for (let i = 0; i < count; i++) particles.push(new Particle());
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, w, h);
+      particles.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // ─── Confetti ───
+    const confettiColors = ['#8b5cf6', '#a78bfa', '#c4b5fd', '#f472b6', '#fbbf24', '#34d399', '#60a5fa', '#f87171'];
+
+    function createConfetti() {
+      const piece = document.createElement('div');
+      piece.classList.add('confetti-piece');
+      piece.style.left = Math.random() * 100 + '%';
+      piece.style.width = Math.random() * 8 + 4 + 'px';
+      piece.style.height = Math.random() * 8 + 4 + 'px';
+      piece.style.background = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      piece.style.animationDuration = Math.random() * 2 + 2 + 's';
+      piece.style.animationDelay = Math.random() * 1 + 's';
+      document.body.appendChild(piece);
+      setTimeout(() => piece.remove(), 5000);
+    }
+
+    function burstConfetti(count) {
+      for (let i = 0; i < count; i++) {
+        setTimeout(createConfetti, i * 30);
+      }
+    }
+
+    // ─── Spotify Card ───
+    const spotifyCard = document.getElementById('spotifyCard');
+    const playIcon = document.getElementById('playIcon');
+    const spinDisc = document.getElementById('spinDisc');
+    const progressFill = document.getElementById('progressFill');
+    const audio = document.getElementById('bgm');
+    const musicBtn = document.getElementById('musicBtn');
+    let musicPlaying = false;
+    let cardMinimized = false;
+    let spotifyCardClicked = false;
+
+    function minimizeCard() {
+      if (cardMinimized) return;
+      cardMinimized = true;
+      spotifyCard.classList.add('minimized');
+      spotifyCard.style.cursor = 'default';
+      musicBtn.style.display = 'none';
+    }
+
+    spotifyCard.addEventListener('click', function (e) {
+      if (cardMinimized) return;
+
+      if (!spotifyCardClicked) {
+        spotifyCardClicked = true;
+
+        // Spin disc
+        spinDisc.classList.add('spinning');
+
+        // Start progress
+        progressFill.classList.add('playing');
+
+        // Change icon
+        playIcon.innerHTML = '&#9646;&#9646;';
+        document.querySelector('.spotify-card .song-artist').textContent = 'Now Playing...';
+        document.querySelector('.spotify-card .hint-text').textContent = '&#127925; Memutar...';
+
+        // Play audio
+        audio.play().catch(() => {});
+        musicPlaying = true;
+        musicBtn.innerHTML = '&#9646;&#9646;';
+        musicBtn.classList.add('playing');
+
+        // After 1.5s, minimize card and go to page 2
+        setTimeout(() => {
+          minimizeCard();
+
+          // Update progress dot
+          document.querySelectorAll('.progress .dot').forEach((dot, i) => {
+            dot.classList.toggle('active', i === 0);
+          });
+
+          // Show page 2 and play film strips
+          const page2 = document.querySelector('.page-2');
+          page2.classList.add('active');
+
+          setTimeout(() => {
+            setFilmTracksPlayState(true);
+          }, 100);
+
+          burstConfetti(60);
+          currentPage = 0;
+        }, 1500);
+      }
+    });
+
+    // ─── Music button (top-right, backup) ───
+    musicBtn.addEventListener('click', () => {
+      if (musicPlaying) {
+        audio.pause();
+        musicBtn.innerHTML = '&#9654;';
+        musicBtn.classList.remove('playing');
+      } else {
+        audio.play().catch(() => {});
+        musicBtn.innerHTML = '&#9646;&#9646;';
+        musicBtn.classList.add('playing');
+        if (!spinDisc.classList.contains('spinning')) {
+          spinDisc.classList.add('spinning');
+          progressFill.classList.add('playing');
+        }
+      }
+      musicPlaying = !musicPlaying;
+    });
+
+    // Keep progress in sync with audio
+    audio.addEventListener('timeupdate', () => {
+      if (audio.duration) {
+        const pct = (audio.currentTime / audio.duration) * 100;
+        progressFill.style.width = pct + '%';
+        const mins = Math.floor(audio.currentTime / 60);
+        const secs = Math.floor(audio.currentTime % 60);
+        document.querySelector('.spotify-card .time:first-child').textContent =
+          mins + ':' + String(secs).padStart(2, '0');
+      }
+    });
+
+    // ─── Film Strip Setup (Cinematic) ───
+    const PHOTOS = ['lesta1.jpeg','lesta2.jpeg','lesta3.jpeg','lesta4.jpeg','lesta5.jpeg','lesta6.jpeg','lesta7.jpeg','lesta8.jpeg','lesta9.jpeg'];
+
+    function buildFilmTrack(track) {
+      if (!track) return;
+      track.innerHTML = '';
+      const sets = 3;
+      for (let set = 0; set < sets; set++) {
+        PHOTOS.forEach((src, idx) => {
+          const frame = document.createElement('div');
+          frame.className = 'film-frame';
+          frame.dataset.idx = idx;
+
+          const sprTop = document.createElement('div');
+          sprTop.className = 'sprockets top';
+
+          const photoContainer = document.createElement('div');
+          photoContainer.className = 'film-photo-container';
+
+          const img = document.createElement('img');
+          img.src = src;
+          img.className = 'film-photo';
+
+          photoContainer.appendChild(img);
+
+          const sprBottom = document.createElement('div');
+          sprBottom.className = 'sprockets bottom';
+
+          frame.appendChild(sprTop);
+          frame.appendChild(photoContainer);
+          frame.appendChild(sprBottom);
+
+          track.appendChild(frame);
+        });
+      }
+    }
+
+    function populateFilmStrips() {
+      ['filmTrackUp', 'filmTrackDown', 'filmTrackHoriz'].forEach(id => {
+        buildFilmTrack(document.getElementById(id));
+      });
+    }
+    populateFilmStrips();
+
+    // ─── Gift Box ───
+    const giftBox = document.getElementById('giftBox');
+    const giftWrap = document.getElementById('giftWrap');
+    const letterPopup = document.getElementById('letterPopup');
+    if (giftBox) {
+      giftBox.addEventListener('click', () => {
+        giftBox.classList.add('opened');
+        setTimeout(() => {
+          giftWrap.style.opacity = '0';
+          giftWrap.style.transition = 'opacity 0.5s ease';
+          letterPopup.classList.add('show');
+          burstConfetti(30);
+        }, 600);
+      });
+    }
+
+    function getFilmFrames() {
+      return document.querySelectorAll('#filmStripScene .film-frame');
+    }
+
+    function setFilmTracksPlayState(running) {
+      document.querySelectorAll('#filmStripScene .film-track').forEach(track => {
+        track.classList.toggle('running', running);
+      });
+    }
+
+    // ─── Page 2 Click to Advance ───
+    document.querySelector('.page-2')?.addEventListener('click', () => {
+      goToPage(1);
+    });
+
+    audio.addEventListener('ended', () => {
+      setFilmTracksPlayState(false);
+      document.body.classList.remove('playing');
+      if (currentPage === 0 || currentPage === -1) {
+        setTimeout(() => goToPage(1), 1000);
+      }
+    });
+
+    audio.addEventListener('pause', () => {
+      setFilmTracksPlayState(false);
+      document.body.classList.remove('playing');
+    });
+
+    audio.addEventListener('play', () => {
+      setFilmTracksPlayState(true);
+      document.body.classList.add('playing');
+    });
+
+    audio.addEventListener('loadedmetadata', () => {
+      document.querySelector('.spotify-card .time:last-child').textContent =
+        audio.duration ? '-' + Math.floor(audio.duration / 60) + ':' + String(Math.floor(audio.duration % 60)).padStart(2, '0') : '-?:??';
+    });
+
+    // ─── Keyboard nav ───
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        const next = currentPage + 1;
+        if (next < totalPages) goToPage(next);
+      }
+      if (e.key === 'ArrowLeft') {
+        const prev = currentPage - 1;
+        if (prev >= 0) goToPage(prev);
+      }
+    });
+  </script>
+</body>
+</html>
