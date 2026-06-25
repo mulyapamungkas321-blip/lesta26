@@ -5,9 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Happy Birthday Lesta!</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&family=Great+Vibes&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
+    @font-face {
+      font-family: 'AntonellaScript';
+      src: url('https://fontsforyou.com/fonts/a/AntonellaScript.ttf') format('truetype');
+      font-display: swap;
+    }
     * {
+      margin: 0;
       margin: 0;
       padding: 0;
       box-sizing: border-box;
@@ -511,7 +517,7 @@
       visibility: visible;
     }
     .hb-title {
-      font-family: 'Great Vibes', cursive;
+      font-family: 'AntonellaScript', 'Great Vibes', cursive;
       font-size: clamp(2.5rem, 8vw, 6rem);
       font-weight: 400;
       color: #e8e0ff;
@@ -520,7 +526,7 @@
       animation: hbPulse 4s ease-in-out infinite;
     }
     .hb-name {
-      font-family: 'Great Vibes', cursive;
+      font-family: 'AntonellaScript', 'Great Vibes', cursive;
       font-size: clamp(2rem, 6vw, 4.5rem);
       font-weight: 400;
       color: #fff;
@@ -534,13 +540,17 @@
       animation: hbGlow 3s ease-in-out infinite;
     }
     .hb-lyric {
-      font-family: 'Great Vibes', cursive;
+      font-family: 'AntonellaScript', 'Great Vibes', cursive;
       font-size: clamp(1rem, 2.5vw, 1.6rem);
       color: rgba(255,255,255,0.35);
-      margin-top: 2vh;
+      margin-top: 1.5vh;
       letter-spacing: 0.08em;
       font-style: normal;
-      animation: hbBlink 2.5s ease-in-out infinite;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+    }
+    .hb-lyric.show {
+      opacity: 1;
     }
     @keyframes hbPulse {
       0%, 100% { transform: scale(1); text-shadow: 0 0 60px rgba(139,92,246,0.7), 0 0 120px rgba(139,92,246,0.3), 0 4px 20px rgba(0,0,0,0.9); }
@@ -548,14 +558,10 @@
     }
     @keyframes hbGlow {
       0%, 100% { filter: brightness(1); }
-      50% { filter: brightness(1.2); }
-    }
-    @keyframes hbBlink {
-      0%, 100% { opacity: 0.35; }
-      50% { opacity: 0.7; }
-    }
+       50% { filter: brightness(1.2); }
+     }
 
-    /* ─── Page 3: Gift Box ─── */
+     /* ─── Page 3: Gift Box ─── */
     .gift-wrap {
       position: absolute;
       inset: 0;
@@ -982,8 +988,12 @@
       <div class="hb-wrap">
         <div class="hb-title">Happy Birthday</div>
         <div class="hb-name">Lesta</div>
-        <div class="hb-lyric">~ you're the sweetest ~</div>
-        <div class="hb-lyric" style="font-size:clamp(0.75rem,1.8vw,1.2rem);margin-top:0.5vh;opacity:0.25">~ click anywhere to continue ~</div>
+        <div class="hb-lyric" id="lyric1">I know a place, it's somewhere I go</div>
+        <div class="hb-lyric" id="lyric2">when I need to remember your face</div>
+        <div class="hb-lyric" id="lyric3">Something 'bout you now</div>
+        <div class="hb-lyric" id="lyric4">I can't figure it out</div>
+        <div class="hb-lyric" id="lyric5" style="font-size:clamp(0.75rem,1.5vw,1rem);margin-top:3vh;opacity:0.4">~ about you ~</div>
+        <div class="hb-lyric" id="lyric6" style="font-size:clamp(0.6rem,1.2vw,0.8rem);margin-top:0.5vh;opacity:0.2">~ click anywhere to continue ~</div>
       </div>
       <div class="doc-grain"></div>
       <div class="doc-vignette"></div>
@@ -1120,8 +1130,11 @@
       if (next === 0) {
         setFilmTracksPlayState(true);
         burstConfetti(60);
+        setTimeout(animateLyrics, 600);
       } else if (prev === 0) {
-        setFilmTracksPlayState(false);
+      resetLyrics();
+      setFilmTracksPlayState(false);
+        resetLyrics();
       }
 
       pages[next].classList.add('active');
@@ -1324,6 +1337,9 @@
 
           burstConfetti(60);
           currentPage = 0;
+
+          // Animate lyrics
+          setTimeout(animateLyrics, 500);
         }, 1500);
       }
     });
@@ -1488,6 +1504,28 @@
           burstConfetti(30);
         }, 600);
       });
+    }
+
+    // ─── Lyric Animation ───
+    let lyricTimer = null;
+
+    function animateLyrics() {
+      const lyrics = document.querySelectorAll('.hb-lyric');
+      lyrics.forEach(l => l.classList.remove('show'));
+      lyricTimer = null;
+      let idx = 0;
+      function showNext() {
+        if (idx >= lyrics.length) return;
+        lyrics[idx].classList.add('show');
+        idx++;
+        lyricTimer = setTimeout(showNext, 2000);
+      }
+      showNext();
+    }
+
+    function resetLyrics() {
+      if (lyricTimer) { clearTimeout(lyricTimer); lyricTimer = null; }
+      document.querySelectorAll('.hb-lyric').forEach(l => l.classList.remove('show'));
     }
 
     function getFilmFrames() {
