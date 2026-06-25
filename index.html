@@ -550,7 +550,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: opacity 0.8s ease;
     }
 
     .hb-sub {
@@ -1004,7 +1003,7 @@
         <div class="hb-title">Happy Birthday</div>
         <div class="hb-name">Lesta</div>
         <div class="hb-sub">~ click anywhere to continue ~</div>
-        <div class="hb-lyric" id="hbLyric"></div>
+        <div class="hb-lyric" id="hbLyric">ABOUT YOU</div>
       </div>
       <div class="doc-grain"></div>
       <div class="doc-vignette"></div>
@@ -1516,75 +1515,9 @@
       });
     }
 
-    // ─── Lyric Animation (synced to audio) ───
-    const LYRIC_TIMES = [
-      { time: 0.05, text: 'I know a place' },
-      { time: 0.14, text: 'It\'s somewhere I go when I need to remember your face' },
-      { time: 0.24, text: 'We get married in our heads' },
-      { time: 0.33, text: 'Something to do while we try to recall how we met' },
-      { time: 84.21, text: 'Do you think I have forgotten?' },
-      { time: 89.22, text: 'Do you think I have forgotten?' },
-      { time: 94.12, text: 'Do you think I have forgotten about you?' },
-      { time: 104.27, text: 'You and I' },
-      { time: 109.12, text: 'Were alive' },
-      { time: 114.44, text: 'With nothing to do I could lay and just look in your eyes' },
-      { time: 124.81, text: 'Wait and pretend' },
-      { time: 134.84, text: 'Hold on and hope that we\'ll find our way back in the end' },
-      { time: 144.28, text: 'Do you think I have forgotten?' },
-      { time: 149.16, text: 'Do you think I have forgotten?' },
-      { time: 154.10, text: 'Do you think I have forgotten about you?' },
-      { time: 164.25, text: 'Do you think I have forgotten?' },
-      { time: 169.23, text: 'Do you think I have forgotten?' },
-      { time: 174.12, text: 'Do you think I have forgotten about you?' },
-      { time: 184.60, text: 'There was something about you that now I can\'t remember' },
-      { time: 189.51, text: 'It\'s the same damn thing that made my heart surrender' },
-      { time: 194.51, text: 'And I\'ll miss you on a train, I\'ll miss you in the morning' },
-      { time: 199.50, text: 'I never know what to think about' },
-      { time: 203.83, text: 'I think about you' },
-      { time: 209.23, text: 'About you' },
-      { time: 214.24, text: 'Do you think I have forgotten about you?' },
-      { time: 224.17, text: 'About you' },
-      { time: 229.30, text: 'About you' },
-      { time: 234.22, text: 'Do you think I have forgotten about you?' },
-    ];
-    let lyricRaf = null;
-    let currentLyricIdx = -1;
-
-    function updateLyric() {
-      const el = document.getElementById('hbLyric');
-      if (!el) return;
-      if (!audio.duration) { el.textContent = ''; el.style.opacity = '0'; return; }
-      const t = audio.currentTime;
-      let idx = -1;
-      for (let i = LYRIC_TIMES.length - 1; i >= 0; i--) {
-        if (t >= LYRIC_TIMES[i].time) { idx = i; break; }
-      }
-      if (idx !== currentLyricIdx) {
-        currentLyricIdx = idx;
-        el.textContent = idx >= 0 ? LYRIC_TIMES[idx].text : '';
-        el.style.opacity = idx >= 0 ? '1' : '0';
-      }
-    }
-
-    function lyricLoop() {
-      updateLyric();
-      lyricRaf = requestAnimationFrame(lyricLoop);
-    }
-
-    function startLyrics() {
-      currentLyricIdx = -1;
-      const el = document.getElementById('hbLyric');
-      if (el) { el.textContent = ''; el.style.opacity = '0'; }
-      if (lyricRaf) cancelAnimationFrame(lyricRaf);
-      lyricRaf = requestAnimationFrame(lyricLoop);
-    }
-
-    function stopLyrics() {
-      if (lyricRaf) { cancelAnimationFrame(lyricRaf); lyricRaf = null; }
-      currentLyricIdx = -1;
-      const el = document.getElementById('hbLyric');
-      if (el) { el.textContent = ''; el.style.opacity = '0'; }
-    }
+    // ─── Lyric Animation (deprecated, static text only) ───
+    function startLyrics() {}
+    function stopLyrics() {}
 
     function getFilmFrames() {
       return document.querySelectorAll('#filmStripScene .film-frame');
