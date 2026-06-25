@@ -1143,9 +1143,8 @@
         burstConfetti(60);
         setTimeout(startLyrics, 600);
       } else if (prev === 0) {
-      stopLyrics();
-      setFilmTracksPlayState(false);
         stopLyrics();
+        setFilmTracksPlayState(false);
       }
 
       pages[next].classList.add('active');
@@ -1383,7 +1382,6 @@
         const timeStr = mins + ':' + String(secs).padStart(2, '0');
         document.querySelector('.spotify-card .time:first-child').textContent = timeStr;
         if (songTimer) songTimer.textContent = timeStr;
-        updateLyric();
       }
     });
 
@@ -1549,12 +1547,13 @@
       { time: 229.30, text: 'About you' },
       { time: 234.22, text: 'Do you think I have forgotten about you?' },
     ];
-    let lyricActive = false;
+    let lyricRaf = null;
     let currentLyricIdx = -1;
 
     function updateLyric() {
       const el = document.getElementById('hbLyric');
-      if (!el || !lyricActive || !audio.duration) return;
+      if (!el) return;
+      if (!audio.duration) { el.textContent = ''; el.style.opacity = '0'; return; }
       const t = audio.currentTime;
       let idx = -1;
       for (let i = LYRIC_TIMES.length - 1; i >= 0; i--) {
@@ -1567,15 +1566,21 @@
       }
     }
 
+    function lyricLoop() {
+      updateLyric();
+      lyricRaf = requestAnimationFrame(lyricLoop);
+    }
+
     function startLyrics() {
-      lyricActive = true;
       currentLyricIdx = -1;
       const el = document.getElementById('hbLyric');
       if (el) { el.textContent = ''; el.style.opacity = '0'; }
+      if (lyricRaf) cancelAnimationFrame(lyricRaf);
+      lyricRaf = requestAnimationFrame(lyricLoop);
     }
 
     function stopLyrics() {
-      lyricActive = false;
+      if (lyricRaf) { cancelAnimationFrame(lyricRaf); lyricRaf = null; }
       currentLyricIdx = -1;
       const el = document.getElementById('hbLyric');
       if (el) { el.textContent = ''; el.style.opacity = '0'; }
