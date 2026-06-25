@@ -1535,11 +1535,11 @@
     });
 
     audio.addEventListener('ended', () => {
-      setFilmTracksPlayState(false);
-      document.body.classList.remove('playing');
       if (currentPage === 0 || currentPage === -1) {
         setTimeout(() => goToPage(1), 1000);
       }
+      audio.currentTime = 0;
+      audio.play();
     });
 
     audio.addEventListener('pause', () => {
