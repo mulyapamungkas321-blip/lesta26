@@ -20,10 +20,10 @@
     }
 
     :root {
-      --purple-900: #1a0a2e;
-      --purple-800: #2d1b4e;
-      --purple-700: #4a2d7a;
-      --purple-600: #6b3fa0;
+      --purple-900: #4c1d95;
+      --purple-800: #5b21b6;
+      --purple-700: #6d28d9;
+      --purple-600: #7c3aed;
       --purple-500: #8b5cf6;
       --purple-400: #a78bfa;
       --purple-300: #c4b5fd;
@@ -41,7 +41,7 @@
       height: 100%;
       overflow: hidden;
       font-family: 'Fredoka', sans-serif;
-      background: var(--purple-900);
+      background: linear-gradient(135deg, var(--purple-900) 0%, var(--purple-700) 40%, var(--pink-400) 100%);
       color: var(--white);
     }
 
@@ -326,7 +326,7 @@
     /* ─── Page 2: Film Strip Lyric (Cinematic) ─── */
     .page-2 {
       overflow: hidden;
-      background: var(--bg-dark, hsl(230, 25%, 5%));
+      background: linear-gradient(160deg, var(--purple-600) 0%, var(--pink-400) 50%, var(--purple-800) 100%);
     }
 
     .film-strip-scene {
@@ -448,7 +448,7 @@
       height: 100%;
       object-fit: cover;
       border-radius: 2px;
-      filter: brightness(0.40) contrast(1.05) saturate(0.35) grayscale(0.3);
+      filter: brightness(0.70) contrast(1.05) saturate(0.50) grayscale(0.15);
       transition: filter 0.5s ease, transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
 
@@ -488,12 +488,12 @@
       inset: 0;
       z-index: 5;
       background:
-        radial-gradient(ellipse at center, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.78) 100%),
+        radial-gradient(ellipse at center, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.40) 100%),
         linear-gradient(to bottom,
-          rgba(0,0,0,0.65) 0%,
-          rgba(0,0,0,0.15) 20%,
-          rgba(0,0,0,0.15) 80%,
-          rgba(0,0,0,0.70) 100%
+          rgba(0,0,0,0.30) 0%,
+          rgba(0,0,0,0.05) 20%,
+          rgba(0,0,0,0.05) 80%,
+          rgba(0,0,0,0.35) 100%
         );
       pointer-events: none;
     }
@@ -520,8 +520,11 @@
       font-family: 'AntonellaScript', 'Great Vibes', cursive;
       font-size: clamp(2.5rem, 8vw, 6rem);
       font-weight: 400;
-      color: #e8e0ff;
-      text-shadow: 0 0 60px rgba(139,92,246,0.7), 0 0 120px rgba(139,92,246,0.3), 0 4px 20px rgba(0,0,0,0.9);
+      background: linear-gradient(135deg, #c4b5fd 0%, #f472b6 50%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
       letter-spacing: 0.05em;
       animation: hbPulse 4s ease-in-out infinite;
     }
@@ -529,14 +532,12 @@
       font-family: 'AntonellaScript', 'Great Vibes', cursive;
       font-size: clamp(2rem, 6vw, 4.5rem);
       font-weight: 400;
-      color: #fff;
-      text-shadow: 0 0 80px rgba(139,92,246,0.8), 0 0 160px rgba(139,92,246,0.4), 0 6px 30px rgba(0,0,0,0.95);
-      letter-spacing: 0.04em;
       margin-top: -0.1em;
-      background: linear-gradient(135deg, #f0eaff 0%, #c4b5fd 40%, #a78bfa 70%, #f0eaff 100%);
+      background: linear-gradient(135deg, #f9a8d4 0%, #a78bfa 40%, #f472b6 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      letter-spacing: 0.04em;
       animation: hbGlow 3s ease-in-out infinite;
     }
     .hb-lyric {
@@ -567,13 +568,13 @@
       50% { opacity: 0.75; }
     }
     @keyframes hbPulse {
-      0%, 100% { transform: scale(1); text-shadow: 0 0 60px rgba(139,92,246,0.7), 0 0 120px rgba(139,92,246,0.3), 0 4px 20px rgba(0,0,0,0.9); }
-      50% { transform: scale(1.03); text-shadow: 0 0 80px rgba(139,92,246,0.9), 0 0 160px rgba(139,92,246,0.5), 0 4px 20px rgba(0,0,0,0.9); }
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 30px rgba(139,92,246,0.5)) drop-shadow(0 4px 10px rgba(0,0,0,0.5)); }
+      50% { transform: scale(1.03); filter: drop-shadow(0 0 50px rgba(244,114,182,0.7)) drop-shadow(0 4px 10px rgba(0,0,0,0.5)); }
     }
     @keyframes hbGlow {
-      0%, 100% { filter: brightness(1); }
-       50% { filter: brightness(1.2); }
-     }
+      0%, 100% { filter: brightness(1) drop-shadow(0 0 40px rgba(244,114,182,0.6)) drop-shadow(0 6px 15px rgba(0,0,0,0.5)); }
+      50% { filter: brightness(1.2) drop-shadow(0 0 60px rgba(244,114,182,0.8)) drop-shadow(0 6px 15px rgba(0,0,0,0.5)); }
+    }
 
      /* ─── Page 3: Gift Box ─── */
     .gift-wrap {
@@ -746,7 +747,7 @@
       text-align: center;
       font-family: 'Fredoka', sans-serif;
       font-size: clamp(0.55rem, 0.9vw, 0.7rem);
-      color: rgba(255,255,255,0.15);
+      color: var(--purple-300);
       letter-spacing: 0.2em;
       margin-bottom: 0.6rem;
     }
@@ -758,19 +759,54 @@
       animation: galeriScroll 20s linear infinite;
     }
 
-    .page-4 .galeri-track img {
-      height: 160px;
+    .page-4 .galeri-frame {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: linear-gradient(145deg, #fff 0%, #f0e6ff 100%);
+      border-radius: 10px;
+      padding: 6px 6px 18px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25), 0 0 0 2px rgba(255,255,255,0.5);
+      flex-shrink: 0;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+
+    .page-4 .galeri-frame::after {
+      content: '\2764';
+      position: absolute;
+      bottom: 3px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      color: #f472b6;
+      opacity: 0.6;
+    }
+
+    .page-4 .galeri-frame:hover {
+      transform: scale(1.08) rotate(-1deg);
+      box-shadow: 0 10px 30px rgba(139, 92, 246, 0.35), 0 0 0 2px rgba(255,255,255,0.7);
+    }
+
+    .page-4 .galeri-frame img {
+      height: 140px;
       width: auto;
       border-radius: 6px;
       object-fit: cover;
-      flex-shrink: 0;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: block;
     }
 
-    .page-4 .galeri-track img:hover {
-      transform: scale(1.08) rotate(-1deg);
-      box-shadow: 0 6px 24px rgba(139, 92, 246, 0.3);
+    .page-4 .gallery-praise {
+      font-family: 'AntonellaScript', 'Great Vibes', cursive;
+      font-size: clamp(0.8rem, 1.8vw, 1.2rem);
+      background: linear-gradient(135deg, #f472b6 0%, #a78bfa 50%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0.6rem 0 0.2rem;
+      text-align: center;
+      line-height: 1.3;
+      filter: drop-shadow(0 0 20px rgba(244,114,182,0.4));
     }
 
     @keyframes galeriScroll {
@@ -965,6 +1001,30 @@
     }
 
     /* ─── Responsive ─── */
+    /* ─── Falling Flowers ─── */
+    #flower-container {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .falling-flower {
+      position: absolute;
+      top: -60px;
+      width: clamp(20px, 3vw, 40px);
+      height: auto;
+      object-fit: contain;
+      opacity: 0.7;
+      animation: flowerFall linear infinite;
+    }
+    @keyframes flowerFall {
+      0% { transform: translateY(0) translateX(0) rotate(0deg) scale(1); opacity: 0.7; }
+      25% { transform: translateY(25vh) translateX(30px) rotate(90deg) scale(1.05); opacity: 0.8; }
+      50% { transform: translateY(50vh) translateX(-20px) rotate(180deg) scale(0.95); opacity: 0.7; }
+      75% { transform: translateY(75vh) translateX(25px) rotate(270deg) scale(1.02); opacity: 0.6; }
+      100% { transform: translateY(110vh) translateX(-10px) rotate(360deg) scale(0.8); opacity: 0; }
+    }
     @media (max-width: 600px) {
       .page-4 .galeri-strip { width: calc(100% + 2rem); margin: 0.8rem -1rem 0.3rem; }
       .page-4 .galeri-track img { height: 110px; }
@@ -975,6 +1035,7 @@
 <body>
 
   <canvas id="particles-canvas"></canvas>
+  <div id="flower-container"></div>
 
   <audio id="bgm" preload="metadata">
     <source src="aboutyou.mp3" type="audio/mpeg">
@@ -1046,27 +1107,28 @@
         <div class="galeri-label">&#128247; Galeri Kenangan&#128247;</div>
         <div class="galeri-sub">2023-2024</div>
         <div class="galeri-track">
-          <img src="lesta1.jpeg" alt="">
-          <img src="lesta2.jpeg" alt="">
-          <img src="lesta3.jpeg" alt="">
-          <img src="lesta4.jpeg" alt="">
-          <img src="lesta5.jpeg" alt="">
-          <img src="lesta6.jpeg" alt="">
-          <img src="lesta7.jpeg" alt="">
-          <img src="lesta8.jpeg" alt="">
-          <img src="lesta9.jpeg" alt="">
-          <img src="lesta1.jpeg" alt="">
-          <img src="lesta2.jpeg" alt="">
-          <img src="lesta3.jpeg" alt="">
-          <img src="lesta4.jpeg" alt="">
-          <img src="lesta5.jpeg" alt="">
-          <img src="lesta6.jpeg" alt="">
-          <img src="lesta7.jpeg" alt="">
-          <img src="lesta8.jpeg" alt="">
-          <img src="lesta9.jpeg" alt="">
+          <div class="galeri-frame"><img src="lesta1.jpeg" alt=""></div>
+          <div class="galeri-frame"><img src="lesta2.jpeg" alt=""></div>
+          <div class="galeri-frame"><img src="lesta3.jpeg" alt=""></div>
+          <div class="galeri-frame"><img src="lesta4.jpeg" alt=""></div>
+          <div class="galeri-frame"><img src="lesta5.jpeg" alt=""></div>
+          <div class="galeri-frame"><img src="lesta6.jpeg" alt=""></div>
+          <div class="galeri-frame"><img src="lesta7.jpeg" alt=""></div>
+          <div class="galeri-frame"><img src="lesta8.jpeg" alt=""></div>
+          <div class="galeri-frame"><img src="lesta9.jpeg" alt=""></div>
+          <div class="galeri-frame"><img src="lesta1.jpeg" alt=""></div>
+          <div class="galeri-frame"><img src="lesta2.jpeg" alt=""></div>
+          <div class="galeri-frame"><img src="lesta3.jpeg" alt=""></div>
+          <div class="galeri-frame"><img src="lesta4.jpeg" alt=""></div>
+          <div class="galeri-frame"><img src="lesta5.jpeg" alt=""></div>
+          <div class="galeri-frame"><img src="lesta6.jpeg" alt=""></div>
+          <div class="galeri-frame"><img src="lesta7.jpeg" alt=""></div>
+          <div class="galeri-frame"><img src="lesta8.jpeg" alt=""></div>
+          <div class="galeri-frame"><img src="lesta9.jpeg" alt=""></div>
         </div>
       </div>
-      <button class="btn" data-next="3">&#127873; Klik untuk kejutan!</button>
+      <div class="gallery-praise">-luuucuukk bangett-</div>
+      <button class="btn" data-next="3">&#127873; Berikutnyaa</button>
     </div>
 
     <!-- ══ PAGE 7: ENDING ══ -->
@@ -1209,6 +1271,7 @@
         p.classList.remove('active', 'exit');
       });
       document.querySelectorAll('.progress .dot').forEach(d => d.classList.remove('active'));
+      stopFlowers();
       currentPage = -1;
     });
 
@@ -1345,6 +1408,7 @@
           }, 100);
 
           burstConfetti(60);
+          startFlowers();
           currentPage = 0;
 
           // Animate lyrics
@@ -1568,6 +1632,51 @@
         if (prev >= 0) goToPage(prev);
       }
     });
-  </script>
+  // ─── Falling Flowers ───
+  const flowers = ['flower1.png', 'flower2.png'];
+  const flowerContainer = document.getElementById('flower-container');
+  let flowerCount = 0;
+  let flowerInterval = null;
+  let flowersRunning = false;
+
+  function createFlower() {
+    if (flowerCount > 25) return;
+    const img = document.createElement('img');
+    img.src = flowers[Math.floor(Math.random() * flowers.length)];
+    img.className = 'falling-flower';
+    img.style.left = Math.random() * 95 + '%';
+    img.style.width = clamp(20, 40, Math.random() * 20 + 20) + 'px';
+    img.style.animationDuration = (Math.random() * 4 + 5) + 's';
+    img.style.animationDelay = '0s';
+    img.style.opacity = Math.random() * 0.4 + 0.4;
+    flowerContainer.appendChild(img);
+    flowerCount++;
+
+    img.addEventListener('animationend', () => {
+      img.remove();
+      flowerCount--;
+    });
+  }
+
+  function clamp(min, max, val) { return Math.max(min, Math.min(max, val)); }
+
+  function startFlowers() {
+    if (flowersRunning) return;
+    flowersRunning = true;
+    for (let i = 0; i < 10; i++) {
+      setTimeout(createFlower, i * 400);
+    }
+    flowerInterval = setInterval(() => {
+      if (flowerCount < 20) createFlower();
+    }, 1000);
+  }
+
+  function stopFlowers() {
+    flowersRunning = false;
+    if (flowerInterval) { clearInterval(flowerInterval); flowerInterval = null; }
+    flowerContainer.querySelectorAll('.falling-flower').forEach(el => el.remove());
+    flowerCount = 0;
+  }
+</script>
 </body>
 </html>
