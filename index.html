@@ -924,6 +924,23 @@
       border-color: var(--purple-400);
     }
 
+    .song-timer {
+      position: fixed;
+      top: 1.4rem;
+      right: 4.2rem;
+      z-index: 999;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.75rem;
+      color: var(--purple-300);
+      letter-spacing: 0.05em;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 0.3rem 0.8rem;
+      pointer-events: none;
+    }
+
     @keyframes musicPulse {
       0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
       50% { box-shadow: 0 0 0 12px rgba(139, 92, 246, 0); }
@@ -945,6 +962,7 @@
     <source src="aboutyou.mp3" type="audio/mpeg">
   </audio>
   <button class="music-btn" id="musicBtn" title="Play music">&#9654;</button>
+  <div class="song-timer" id="songTimer" style="display:none">0:00</div>
 
   <div class="progress" id="progress"></div>
 
@@ -1132,6 +1150,7 @@
 
     document.getElementById('btnRestart')?.addEventListener('click', () => {
       // Reset Spotify card
+      spotifyCard.style.display = '';
       spotifyCard.classList.remove('minimized');
       spotifyCard.style.cursor = 'pointer';
       cardMinimized = false;
@@ -1143,6 +1162,7 @@
       document.querySelector('.spotify-card .song-artist').textContent = '&#127925; Klik untuk putar &#127925;';
       document.querySelector('.spotify-card .hint-text').textContent = '&#128073; Klik untuk memulai';
       document.querySelector('.spotify-card .time:first-child').textContent = '0:00';
+      if (songTimer) { songTimer.style.display = 'none'; songTimer.textContent = '0:00'; }
       musicBtn.style.display = 'flex';
       if (musicPlaying) {
         audio.pause();
@@ -1241,6 +1261,7 @@
     const progressFill = document.getElementById('progressFill');
     const audio = document.getElementById('bgm');
     const musicBtn = document.getElementById('musicBtn');
+    const songTimer = document.getElementById('songTimer');
     let musicPlaying = false;
     let cardMinimized = false;
     let spotifyCardClicked = false;
@@ -1248,8 +1269,8 @@
     function minimizeCard() {
       if (cardMinimized) return;
       cardMinimized = true;
-      spotifyCard.classList.add('minimized');
-      spotifyCard.style.cursor = 'default';
+      spotifyCard.style.display = 'none';
+      songTimer.style.display = 'block';
       musicBtn.style.display = 'none';
     }
 
@@ -1324,8 +1345,9 @@
         progressFill.style.width = pct + '%';
         const mins = Math.floor(audio.currentTime / 60);
         const secs = Math.floor(audio.currentTime % 60);
-        document.querySelector('.spotify-card .time:first-child').textContent =
-          mins + ':' + String(secs).padStart(2, '0');
+        const timeStr = mins + ':' + String(secs).padStart(2, '0');
+        document.querySelector('.spotify-card .time:first-child').textContent = timeStr;
+        if (songTimer) songTimer.textContent = timeStr;
       }
     });
 
