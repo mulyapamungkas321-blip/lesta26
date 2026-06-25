@@ -1010,7 +1010,7 @@
       <div class="letter-popup" id="letterPopup">
         <div class="letter-card">
           <div class="letter-flowers">&#127800;&#127801;&#127800;</div>
-          <div class="letter-text">
+          <div class="letter-text" id="letterText">
             <p><strong>Untuk Lesta,</strong></p>
             <p>Selamat ulang tahun ade sukma lestariii, semoga di umur lesta yang sekarang, semua yang lagi kamu usahain bisa berjalan sesuai harapan. semoga kamu sehat dan bahagia selalu.</p>
             <p>Tetap jadi orang yang baik, ceria, dan apa adanya yaa, karena itu yang bikin kamu spesial. semoga tahun ini jadi salah satu tahun terbaik buat kamu. selamat menikmati hari spesialmu, kamu layak dapat semua kebahagiaan itu. &#10084;&#65039;</p>
@@ -1173,6 +1173,15 @@
       }
 
       // Go back to initial state: hide all pages, show only Spotify card
+      // Reset typewriter
+      if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; }
+      if (letterText) letterText.innerHTML = '';
+      document.querySelectorAll('.letter-flowers').forEach(el => el.style.opacity = '');
+      const letterBtn = document.querySelector('.letter-card .btn');
+      if (letterBtn) letterBtn.style.opacity = '';
+      giftBox?.classList.remove('opened');
+      if (giftWrap) { giftWrap.style.opacity = ''; giftWrap.style.transition = ''; }
+
       setFilmTracksPlayState(false);
       getFilmFrames().forEach(f => f.classList.remove('active'));
       pages.forEach(p => {
@@ -1395,17 +1404,88 @@
     }
     populateFilmStrips();
 
-    // ─── Gift Box ───
+    // ─── Gift Box + Typewriter ───
     const giftBox = document.getElementById('giftBox');
     const giftWrap = document.getElementById('giftWrap');
     const letterPopup = document.getElementById('letterPopup');
+    const letterText = document.getElementById('letterText');
+
+    const LETTER_PARAGRAPHS = [
+      { html: '<strong>Untuk Lesta,</strong>' },
+      { html: 'Selamat ulang tahun ade sukma lestariii, semoga di umur lesta yang sekarang, semua yang lagi kamu usahain bisa berjalan sesuai harapan. semoga kamu sehat dan bahagia selalu.' },
+      { html: 'Tetap jadi orang yang baik, ceria, dan apa adanya yaa, karena itu yang bikin kamu spesial. semoga tahun ini jadi salah satu tahun terbaik buat kamu. selamat menikmati hari spesialmu, kamu layak dapat semua kebahagiaan itu. &#10084;&#65039;' },
+      { html: 'ga kerasa yaa udah berapa tahun kita kenal, bersyukur sihh punya kenangan seruu sama kamuu kadang akuuu suka scroll chatt kamu tauu lucu bangett dulu hahahaha, yaa sekarang cumann kenangan aja walaupun di ulang akhirnya mungkin bakal tetap sama,' },
+      { html: 'Dari seseorang yang bersyukur banget kenal kamu.', cls: 'letter-sign' }
+    ];
+
+    let typewriterTimer = null;
+
+    function typeLetterText(flowerEls, btnEl) {
+      if (!letterText) return;
+      letterText.innerHTML = '';
+      let paraIdx = 0;
+      let charIdx = 0;
+      let currentP = null;
+
+      function typeNext() {
+        if (paraIdx >= LETTER_PARAGRAPHS.length) {
+          flowerEls.forEach(el => { el.style.opacity = '1'; });
+          if (btnEl) btnEl.style.opacity = '1';
+          return;
+        }
+
+        if (!currentP) {
+          currentP = document.createElement('p');
+          if (LETTER_PARAGRAPHS[paraIdx].cls) {
+            currentP.className = LETTER_PARAGRAPHS[paraIdx].cls;
+          }
+          letterText.appendChild(currentP);
+        }
+
+        const html = LETTER_PARAGRAPHS[paraIdx].html;
+        if (charIdx < html.length) {
+          // Handle HTML entities and tags as single units
+          let step = 1;
+          if (html[charIdx] === '&') {
+            const end = html.indexOf(';', charIdx);
+            if (end !== -1) step = end - charIdx + 1;
+          } else if (html[charIdx] === '<') {
+            const end = html.indexOf('>', charIdx);
+            if (end !== -1) step = end - charIdx + 1;
+          }
+          currentP.innerHTML = html.slice(0, charIdx + step);
+          charIdx += step;
+          typewriterTimer = setTimeout(typeNext, 20);
+        } else {
+          paraIdx++;
+          charIdx = 0;
+          currentP = null;
+          typewriterTimer = setTimeout(typeNext, 300);
+        }
+      }
+
+      typeNext();
+    }
+
     if (giftBox) {
       giftBox.addEventListener('click', () => {
         giftBox.classList.add('opened');
         setTimeout(() => {
           giftWrap.style.opacity = '0';
           giftWrap.style.transition = 'opacity 0.5s ease';
+
+          // Hide flowers and button for typewriter
+          const flowerEls = document.querySelectorAll('.letter-flowers');
+          const btnEl = document.querySelector('.letter-card .btn');
+          flowerEls.forEach(el => { el.style.opacity = '0'; });
+          if (btnEl) btnEl.style.opacity = '0';
+
           letterPopup.classList.add('show');
+
+          // Start typewriter after popup animation
+          setTimeout(() => {
+            typeLetterText(flowerEls, btnEl);
+          }, 500);
           burstConfetti(30);
         }, 600);
       });
